@@ -182,3 +182,39 @@ td label{
     gap: 20px 40px;
     margin-bottom: 20px;
 }
+
+.segunda-lingua {
+    width: 300px;
+    padding: 20px 30px;
+    border: 2px dashed #27394a;
+    border-radius: 15px;
+    background: #f1f7fc;
+    font-family: Arial, sans-serif;
+}
+
+.segunda-lingua strong {
+    display: block;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #263b4d;
+    font-size: 17px;
+}
+
+.opcao {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+.opcao input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+}
+
+.sigla {
+    font-size: 13px;
+    color: #555;
+}
