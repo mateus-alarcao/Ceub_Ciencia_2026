@@ -190,6 +190,7 @@ td label{
     border-radius: 15px;
     background: #f1f7fc;
     font-family: Arial, sans-serif;
+    margin-top: 12px;
 }
 
 .segunda-lingua strong {
@@ -198,6 +199,7 @@ td label{
     margin-bottom: 15px;
     color: #263b4d;
     font-size: 17px;
+    
 }
 
 .opcao {
