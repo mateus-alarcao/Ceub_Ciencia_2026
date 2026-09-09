@@ -77,16 +77,19 @@
 
         <div class="campo">
           <strong>Estado</strong>
-          <select id="estado" name="estado">
+          <select id="estado1" name="estado1">
 
           </select>
         </div>
+
         <div class="campo">
-          <label for="cidades">Cidade</label>
-          <select id="cidade" name="cidade">
+          <label for="cidade1">Cidade</label>
+          <select id="cidade1" name="cidade1">
             <option value=""></option>
           </select>
         </div>
+
+      </div>
 
     </fieldset>
 
@@ -121,7 +124,6 @@
                 <span>Espanhol</span>
               </label>
             </div>
-
 
           </td>
 
@@ -209,81 +211,112 @@
 
   </form>
 
+  <script>
+    const campoCep = document.getElementById('cep');
+    const campoCpf = document.getElementById('cpf');
+    const campoNascimento = document.getElementById('nascimento');
+    const campoIdade = document.getElementById('idade');
+
+    campoCep.addEventListener('input', function () {
+      let valor = this.value.replace(/\D/g, '');
+
+      if (valor.length > 5) {
+        valor = valor.slice(0, 5) + '-' + valor.slice(5);
+      }
+
+      this.value = valor;
+    });
+
+    campoCep.addEventListener('blur', async function () {
+      const cep = this.value.replace(/\D/g, '');
+
+      if (cep.length !== 8) {
+        alert('Digite um CEP válido');
+        return;
+      }
+
+      try {
+        const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const dados = await resposta.json();
+
+        if (dados.erro) {
+          alert('Digite um CEP válido');
+          return;
+        }
+
+        document.getElementById('logradouro').value = dados.logradouro;
+        document.getElementById('bairro').value = dados.bairro;
+        document.getElementById('cidade').value = dados.localidade;
+        document.getElementById('estado').value = dados.uf;
+        document.getElementById('ibge').value = dados.ibge;
+
+      } catch (erro) {
+        console.error('Erro ao buscar CEP:', erro);
+      }
+    });
+
+    campoCpf.addEventListener('input', function () {
+      let valor = this.value.replace(/\D/g, '');
+
+      if (valor.length === 11) {
+        valor = valor.slice(0, 3) + '.' + valor.slice(3, 6) + '.' + valor.slice(6, 9) + '-' + valor.slice(9);
+      }
+
+      this.value = valor;
+    });
+
+    campoNascimento.addEventListener('change', function () {
+      const nascimento = new Date(this.value);
+      const hoje = new Date();
+
+      let idade = hoje.getFullYear() - nascimento.getFullYear();
+
+      const mes = hoje.getMonth() - nascimento.getMonth();
+
+      if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+        idade--;
+      }
+
+      campoIdade.value = idade + " anos";
+    });
+
+    const urlEstados = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
+    const estadosHTML = document.getElementById("estado1");
+    const cidadesHTML = document.getElementById("cidade1");
+
+    window.addEventListener('load', async function () {
+
+      const request = await fetch(urlEstados);
+      const response = await request.json();
+
+      const options = document.createElement("optgroup");
+      options.setAttribute('label', 'Selecione o estado');
+
+      response.forEach(function (estado) {
+        options.innerHTML += '<option value="' + estado.sigla + '">' + estado.nome + '</option>';
+      });
+
+      estadosHTML.append(options);
+
+    });
+
+    estadosHTML.addEventListener('change', async function () {
+
+      const urlCidades = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados/' + estadosHTML.value + '/municipios';
+      const request = await fetch(urlCidades);
+      const response = await request.json();
+      var options = '';
+
+      response.forEach(function (cidade) {
+        options += '<option>' + cidade.nome + '</option>';
+      });
+
+      cidadesHTML.innerHTML = options;
+
+    });
+
+  </script>
+
 </body>
-
-<script>
-  const campoCep = document.getElementById('cep');
-  const campoCpf = document.getElementById('cpf');
-  const campoNascimento = document.getElementById('nascimento');
-  const campoIdade = document.getElementById('idade');
-
-  campoCep.addEventListener('input', function () {
-    let valor = this.value.replace(/\D/g, '');
-
-    if (valor.length > 5) {
-      valor = valor.slice(0, 5) + '-' + valor.slice(5);
-    }
-
-    this.value = valor;
-  });
-
-  campoCpf.addEventListener('input', function () {
-    let valor = this.value.replace(/\D/g, '');
-
-    if (valor.length === 11) {
-      valor = valor.slice(0, 3) + '.' + valor.slice(3, 6) + '.' + valor.slice(6, 9) + '-' + valor.slice(9)
-    }
-
-    this.value = valor;
-  });
-
-
-  campoNascimento.addEventListener('change', function () {
-
-    const nascimento = new Date(this.value);
-    const hoje = new Date();
-
-    let idade = hoje.getFullYear() - nascimento.getFullYear();
-
-    campoIdade.value = idade + " anos";
-  });
-
-  const urlEstados = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
-  const estadosHTML = document.getElementById("estado");
-  const cidadesHTML = document.getElementById("cidade");
-
-  window.addEventListener('load', async function () {
-
-    const request = await fetch(urlEstados);
-    const response = await request.json();
-
-    const options = document.createElement("optgroup");
-    options.setAttribute('label', 'Selecione o estado')
-
-    response.forEach(function (estadosHTML) {
-      options.innerHTML += '<option value="' + estadosHTML.sigla + '">' + estadosHTML.nome + '</option>';
-    });
-
-    estadosHTML.append(options);
-
-  });
-
-  estadosHTML.addEventListener('change', async function () {
-
-    const urlCidades = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados/' + estadosHTML.value + '/municipios';
-    const request = await fetch(urlCidades);
-    const response = await request.json();
-    var options = '';
-
-    response.forEach(function (cidadesHTML) {
-      options += '<option>' + cidadesHTML.nome + '</option>';
-    });
-
-    cidadesHTML.innerHTML = options;
-
-  });
-
-
-</script>
 
 </html>
