@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minhas Tarefas</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #f2f4f8; color: #263238; }
+    main { width: min(92%, 560px); margin: 60px auto; padding: 28px; background: white; border-radius: 12px; box-shadow: 0 5px 20px #00000012; }
+    h1 { margin-top: 0; color: #203b60; }
+    form { display: flex; gap: 8px; }
+    input { flex: 1; min-width: 0; padding: 12px; border: 1px solid #cbd3dd; border-radius: 6px; font-size: 16px; }
+    button { padding: 12px 16px; border: 0; border-radius: 6px; background: #245b9e; color: white; cursor: pointer; }
+    ul { list-style: none; padding: 0; margin-top: 22px; }
+    li { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid #e8edf2; }
+    li span { flex: 1; overflow-wrap: anywhere; }
+    li.done span { text-decoration: line-through; color: #78838f; }
+    .remove { background: #b43b3b; padding: 8px 10px; }
+    .hint { color: #687684; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Minhas Tarefas</h1>
+    <p class="hint">Adicione tarefas, marque quando concluir ou remova da lista.</p>
+    <form id="task-form">
+      <input id="task-input" type="text" placeholder="Digite uma tarefa..." required>
+      <button type="submit">Adicionar</button>
+    </form>
+    <ul id="task-list"></ul>
+  </main>
+  <script>
+    const form = document.getElementById('task-form');
+    const input = document.getElementById('task-input');
+    const list = document.getElementById('task-list');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const description = input.value.trim();
+      if (!description) return;
+
+      const item = document.createElement('li');
+      const check = document.createElement('input');
+      check.type = 'checkbox';
+      check.addEventListener('change', () => item.classList.toggle('done', check.checked));
+
+      const text = document.createElement('span');
+      text.textContent = description;
+
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.textContent = 'Remover';
+      remove.className = 'remove';
+      remove.addEventListener('click', () => item.remove());
+
+      item.append(check, text, remove);
+      list.appendChild(item);
+      input.value = '';
+      input.focus();
+    });
+  </script>
+</body>
+</html>
